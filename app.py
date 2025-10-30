@@ -1146,6 +1146,8 @@ def material_requests():
         search=search,
         status=status
     )     
+
+
 @app.route('/admin/approve_material/<int:request_id>')
 def approve_material(request_id):
     try:
@@ -1157,21 +1159,23 @@ def approve_material(request_id):
         record = cursor.fetchone()
 
         if not record:
-            flash("Material request not found!", "warning")
+            flash("⚠️ Material request not found!", "warning")
         else:
+            # Update only the Status column since ApprovedDate doesn't exist
             cursor.execute("""
                 UPDATE MaterialRequests 
-                SET Status='Approved', ApprovedDate=? 
-                WHERE RequestID=?
-            """, (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), request_id))
+                SET Status = 'Approved'
+                WHERE RequestID = ?
+            """, (request_id,))
             conn.commit()
             flash(f"✅ Material request #{request_id} approved successfully!", "success")
     except Exception as e:
-        flash(f"Error approving request: {e}", "danger")
+        flash(f"❌ Error approving request: {e}", "danger")
     finally:
         conn.close()
 
     return redirect(url_for('admin_material_requests'))
+
 
 # ❌ Admin rejects material request
 @app.route('/admin/reject_material/<int:request_id>')
