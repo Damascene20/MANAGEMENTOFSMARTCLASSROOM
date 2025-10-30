@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">✏️ Edit Teacher - {{ teacher.Name }}</h2>
+
+    <!-- Flash messages for success/error -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ teacher.Name }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-control" value="{{ teacher.Username }}" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="subject" class="form-label">Subject</label>
+                <input type="text" id="subject" name="subject" class="form-control" value="{{ teacher.Subject }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="text" id="phone" name="phone" class="form-control" value="{{ teacher.Phone }}" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ teacher.Email }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-select" required>
+                    <option value="Teacher" {% if teacher.Role == 'Teacher' %}selected{% endif %}>Teacher</option>
+                    <option value="ICT_Admin" {% if teacher.Role == 'ICT_Admin' %}selected{% endif %}>ICT Admin</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="is_approved" class="form-label">Approval Status</label>
+            <select name="is_approved" id="is_approved" class="form-select" required>
+                <option value="1" {% if teacher.IsApproved == 1 %}selected{% endif %}>Approved</option>
+                <option value="0" {% if teacher.IsApproved == 0 %}selected{% endif %}>Pending/Denied</option>
+            </select>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success me-2">Update Teacher</button>
+            <a href="{{ url_for('manage_teachers') }}" class="btn btn-secondary">Cancel</a>
+
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center text-primary mb-4">Edit Booking #{{ booking.BookingID }}</h2>
+
+    <form method="POST" class="mx-auto" style="max-width: 600px;">
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control" value="{{ booking.Date }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Start Time</label>
+            <input type="time" name="start_time" class="form-control" value="{{ booking.StartTime }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">End Time</label>
+            <input type="time" name="end_time" class="form-control" value="{{ booking.EndTime }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Equipment</label>
+            <input type="text" name="equipment" class="form-control" value="{{ booking.Equipment }}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select" required>
+                {% for s in status_options %}
+                    <option value="{{ s }}" {% if booking.Status == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Booking</button>
+        <a href="{{ url_for('manage_bookings') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

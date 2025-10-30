@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center text-primary mb-3">
+        <i class="bi bi-clipboard-check"></i> Material Requests Management
+    </h2>
+
+    <!-- Export Button -->
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url_for('export_material_requests') }}" class="btn btn-success btn-sm">
+            <i class="bi bi-file-earmark-excel"></i> Export to CSV
+        </a>
+    </div>
+
+    <!-- Search & Filter Section -->
+    <form method="GET" action="{{ url_for('admin_material_requests') }}" class="row g-2 mb-3">
+        <div class="col-md-5 col-sm-6">
+            <input type="text" name="search" class="form-control form-control-sm" 
+                   placeholder="Search by teacher name..." value="{{ request.args.get('search', '') }}">
+        </div>
+        <div class="col-md-3 col-sm-4">
+            <select name="status" class="form-select form-select-sm">
+                <option value="">All Status</option>
+                <option value="Pending" {% if request.args.get('status') == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Approved" {% if request.args.get('status') == 'Approved' %}selected{% endif %}>Approved</option>
+                <option value="Rejected" {% if request.args.get('status') == 'Rejected' %}selected{% endif %}>Rejected</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-sm-6">
+            <button type="submit" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-search"></i> Filter
+            </button>
+        </div>
+    </form>
+
+    {% if requests %}
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Gender</th>
+                    <th>Phone</th>
+                    <th>Class Teacher</th>
+                    <th>Material</th>
+                    <th>Borrowed Date</th>
+                    <th>Return Date</th>
+                    <th>Reason</th>
+                    <th>Letter</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.RequestID }}</td>
+                    <td>{{ req.FullName }}</td>
+                    <td>{{ req.Gender }}</td>
+                    <td>{{ req.PhoneNumber }}</td>
+                    <td>{{ req.ClassTeacher or '-' }}</td>
+                    <td>{{ req.MaterialName }}</td>
+                    <td>{{ req.BorrowedDate }}</td>
+                    <td>{{ req.ReturnedDate }}</td>
+                    <td>{{ req.Reason or '-' }}</td>
+                    <td>
+                        {% if req.LetterFile %}
+                            <a href="{{ url_for('static', filename='uploads/' ~ req.LetterFile) }}" 
+                               class="btn btn-sm btn-outline-info" target="_blank">
+                                View
+                            </a>
+                        {% else %}
+                            <span class="text-muted">No file</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if req.Status == 'Approved' %}
+                            <span class="badge bg-success">Approved</span>
+                        {% elif req.Status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if req.Status == 'Pending' %}
+                            <a href="{{ url_for('approve_material', request_id=req.RequestID) }}" 
+                               class="btn btn-sm btn-success mb-1">
+                                <i class="bi bi-check-circle"></i> Approve
+                            </a>
+                            <a href="{{ url_for('reject_material', request_id=req.RequestID) }}" 
+                               class="btn btn-sm btn-danger mb-1"
+                               onclick="return confirm('Reject this material request?');">
+                                <i class="bi bi-x-circle"></i> Reject
+                            </a>
+                        {% else %}
+                            <span class="text-muted small">No action</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination justify-content-center">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin_material_requests', page=page-1, search=request.args.get('search'), status=request.args.get('status')) }}">Previous</a>
+                </li>
+            {% endif %}
+            
+            {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('admin_material_requests', page=p, search=request.args.get('search'), status=request.args.get('status')) }}">{{ p }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin_material_requests', page=page+1, search=request.args.get('search'), status=request.args.get('status')) }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% else %}
+        <div class="alert alert-info text-center mt-4">
+            <i class="bi bi-info-circle"></i> No material requests found.
+        </div>
+    {% endif %}
+</div>
+
+<!-- Responsive & Styling -->
+<style>
+/* ===== Responsive Table + Layout ===== */
+table {
+    font-size: 0.9rem;
+}
+.table-responsive {
+    border-radius: 10px;
+    overflow-x: auto;
+}
+.btn-success {
+    background-color: #198754;
+    border: none;
+}
+.btn-success:hover {
+    background-color: #157347;
+}
+@media (max-width: 768px) {
+    table {
+        font-size: 0.8rem;
+    }
+    h2 {
+        font-size: 1.2rem;
+    }
+    .btn-sm {
+        padding: 3px 8px;
+        font-size: 0.75rem;
+    }
+    .form-control-sm, .form-select-sm {
+        font-size: 0.8rem;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+/* 🌟 Mobile-friendly styling */
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+h2 {
+    font-weight: 600;
+}
+.form-label {
+    font-weight: 500;
+    color: #0d6efd;
+}
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 16px;
+}
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+textarea {
+    resize: none;
+}
+@media (max-width: 576px) {
+    .container {
+        padding: 1rem;
+    }
+    h2 {
+        font-size: 22px;
+    }
+}
+</style>
+
+<div class="container mt-4 mb-4">
+    <h2 class="text-primary text-center mb-3">📦 Request School Material</h2>
+    <p class="text-center text-muted mb-4" style="font-size: 14px;">
+        Fill out this form carefully to request school materials.
+    </p>
+
+    <form method="POST" enctype="multipart/form-data">
+        
+        <!-- Full Name -->
+        <div class="mb-3">
+            <label for="full_name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="full_name" name="full_name" required>
+        </div>
+
+        <!-- Gender -->
+        <div class="mb-3">
+            <label for="gender" class="form-label">Gender</label>
+            <select class="form-select" id="gender" name="gender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="mb-3">
+            <label for="phone_number" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                   placeholder="078XXXXXXX" pattern="07[2-9][0-9]{7}" required>
+            <div class="form-text">Enter a valid Rwandan phone number (e.g., 078XXXXXXX)</div>
+        </div>
+
+        <!-- Class Teacher -->
+        <div class="mb-3">
+            <label for="class_teacher" class="form-label">Class Teacher</label>
+            <input type="text" class="form-control" id="class_teacher" name="class_teacher">
+        </div>
+
+        <!-- Material Name -->
+        <div class="mb-3">
+            <label for="material_name" class="form-label">Material Name</label>
+            <input type="text" class="form-control" id="material_name" name="material_name" required>
+        </div>
+
+        <!-- Borrowed Date -->
+        <div class="mb-3">
+            <label for="borrowed_date" class="form-label">Borrowed Date</label>
+            <input type="date" class="form-control" id="borrowed_date" name="borrowed_date" required>
+        </div>
+
+        <!-- Returned Date -->
+        <div class="mb-3">
+            <label for="returned_date" class="form-label">Expected Return Date</label>
+            <input type="date" class="form-control" id="returned_date" name="returned_date" required>
+        </div>
+
+        <!-- Reason -->
+        <div class="mb-3">
+            <label for="reason" class="form-label">Reason for Request</label>
+            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Explain why you need this material..."></textarea>
+        </div>
+
+        <!-- Permission Letter -->
+        <div class="mb-3">
+            <label for="letter_file" class="form-label">Upload Permission Letter</label>
+            <input class="form-control" type="file" id="letter_file" name="letter_file" accept=".pdf,.doc,.docx" required>
+            <div class="form-text">Accepted formats: PDF, DOC, DOCX</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit Request</button>
+    </form>
+</div>
+{% endblock %}

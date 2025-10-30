@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}All Booking Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">📋 All Classroom Booking Requests</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Teacher</th>
+                    <th>Classroom</th>
+                    <th>Equipment</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking['BookingID'] }}</td>
+                    <td>{{ booking['Date'] }}</td>
+                    <td>{{ booking['StartTime'] }} - {{ booking['EndTime'] }}</td>
+                    <td>{{ booking['TeacherName'] }}</td>
+                    <td>{{ booking['ClassroomName'] }}</td>
+                    <td>{{ booking['Equipment'] }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if booking['Status'] == 'Approved' %}bg-success
+                            {% elif booking['Status'] == 'Pending' %}bg-warning text-dark
+                            {% elif booking['Status'] == 'Denied' %}bg-danger
+                            {% else %}bg-secondary
+                            {% endif %}">
+                            {{ booking['Status'] }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

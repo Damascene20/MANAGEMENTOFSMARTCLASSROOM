@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    body {
+        background: #f0f4f8;
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 600px; /* adjusted for computer screens */
+        margin: auto;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    .card-body {
+        padding: 25px 30px;
+        font-size: 0.9rem;
+        color: #023047;
+    }
+
+    .card-footer {
+        background-color: #f0f8ff;
+        text-align: center;
+        font-size: 0.85rem;
+        padding: 10px;
+        border-radius: 0 0 12px 12px;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+        text-align: center;
+        color: #ff6f61;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #0077b6;
+    }
+
+    input.form-control,
+    select.form-select {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        border: 1px solid #0077b6;
+        margin-bottom: 10px;
+    }
+
+    input.form-control:focus,
+    select.form-select:focus {
+        border-color: #ff6f61;
+        box-shadow: 0 0 5px rgba(255,111,97,0.5);
+    }
+
+    .btn-success {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 8px;
+        background-color: #ff8c42;
+        font-weight: 600;
+        border: none;
+    }
+
+    .btn-success:hover {
+        background-color: #ffb347;
+    }
+
+    a {
+        font-size: 0.9rem;
+        color: #ff7f50;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: #ffb347;
+        text-decoration: underline;
+    }
+
+    #togglePassword i,
+    #toggleConfirmPassword i {
+        font-size: 1rem;
+        cursor: pointer;
+        color: #2b6777;
+    }
+
+    hr {
+        margin: 15px 0;
+        border-color: #b7e4c7;
+    }
+
+    /* Make it responsive for smaller devices */
+    @media (max-width: 768px) {
+        .card {
+            max-width: 95%;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <h2>Teacher Registration</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} text-center" style="font-size:0.85rem; padding:8px;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <label for="name">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required>
+
+                        <label for="subject">Subject Taught</label>
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Mathematics" required>
+
+                        <hr>
+
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="example@email.com" required>
+
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="+2507..." required>
+
+                        <label for="gender">Gender</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+
+                        <label for="class_teacher">Class Teacher (Optional)</label>
+                        <input type="text" class="form-control" id="class_teacher" name="class_teacher" placeholder="Grade 7A">
+
+                        <hr>
+
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="johndoe123" required>
+
+                        <label for="password">Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <label for="confirm_password">Confirm Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn btn-success mt-3">Register</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    Already registered? <a href="{{ url_for('login') }}">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setupPasswordToggle(inputId, toggleId){
+        const input = document.getElementById(inputId);
+        const toggle = document.getElementById(toggleId);
+        toggle.addEventListener('click', () => {
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+            toggle.querySelector('i').classList.toggle('bi-eye');
+            toggle.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setupPasswordToggle('password','togglePassword');
+        setupPasswordToggle('confirm_password','toggleConfirmPassword');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-5" style="background: linear-gradient(to right, #f0f8ff, #ffffff); min-height: 100vh;">
+
+    <!-- Dashboard Header -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-primary display-5">
+            <i class="bi bi-gear-fill me-2"></i> GS MUKONDO Teachers Dashboard
+        </h1>
+        <p class="lead text-secondary">
+            Manage teacher accounts and approve or deny access to the SMART Classroom system.
+        </p>
+    </div>
+
+    <!-- Info Alert Card -->
+    <div class="card shadow-lg mb-5 mx-auto" style="max-width: 800px; border-left: 5px solid #0dcaf0;">
+        <div class="card-body text-center">
+            <h5 class="card-title text-info fw-bold">Administrator Duties</h5>
+            <p class="card-text fs-6">
+                As the ICT Administrator, your responsibilities include 
+                <strong>approving/denying</strong> bookings and 
+                <strong>managing</strong> teacher accounts efficiently.
+            </p>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="my-5 border-primary opacity-50">
+
+    <!-- Management Buttons (Cards) -->
+    <div class="row justify-content-center g-4">
+        <!-- Teacher Status Accounts -->
+        <div class="col-md-4 col-sm-6">
+            <a href="{{ url_for('manage_teacherbook') }}" class="text-decoration-none">
+                <div class="card shadow-lg hover-scale border-0 text-center p-4" style="background: linear-gradient(135deg, #0d6efd, #6f42c1); color: #fff;">
+                    <i class="bi bi-person-lines-fill display-4 mb-3"></i>
+                    <h5 class="fw-bold">Teacher Status Accounts</h5>
+                    <p class="small">Approve, deny, and manage all teacher accounts.</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Book SMART Lab -->
+        <div class="col-md-4 col-sm-6">
+            <a href="{{ url_for('bookings') }}" class="text-decoration-none">
+                <div class="card shadow-lg hover-scale border-0 text-center p-4" style="background: linear-gradient(135deg, #198754, #20c997); color: #fff;">
+                    <i class="bi bi-graph-up display-4 mb-3"></i>
+                    <h5 class="fw-bold">Book SMART Lab</h5>
+                    <p class="small">Schedule and manage lab bookings efficiently.</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Teacher Material Requests -->
+        <div class="col-md-4 col-sm-6">
+            <a href="{{ url_for('material_requests') }}" class="text-decoration-none">
+                <div class="card shadow-lg hover-scale border-0 text-center p-4" style="background: linear-gradient(135deg, #ffc107, #fd7e14); color: #fff;">
+                    <i class="bi bi-journal-text display-4 mb-3"></i>
+                    <h5 class="fw-bold">Teacher Material Requests</h5>
+                    <p class="small">View and manage all material requests submitted by teachers.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Custom Styles -->
+<style>
+/* Hover effect for cards */
+.hover-scale:hover {
+    transform: translateY(-5px) scale(1.02);
+    transition: all 0.3s ease;
+}
+
+/* Responsive card texts */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 3rem !important;
+    }
+    .card h5 {
+        font-size: 1.1rem !important;
+    }
+    .card p {
+        font-size: 0.85rem !important;
+    }
+}
+</style>
+{% endblock %}

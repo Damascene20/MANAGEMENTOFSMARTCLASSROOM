@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-3 text-center text-primary">📊 SMART Classroom Usage Reports</h3>
+
+    <p class="text-muted small text-center">
+        Report generated on: <strong>{{ now.strftime('%Y-%m-%d %I:%M %p') }}</strong>
+    </p>
+    <hr>
+
+    <!-- 🧾 Booking Summary Section -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-secondary text-white fw-bold">Booking Status Summary</div>
+                <div class="card-body">
+                    {% if summary %}
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Approved
+                            <span class="badge bg-success rounded-pill">{{ summary.get('Approved', 0) }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Pending
+                            <span class="badge bg-warning text-dark rounded-pill">{{ summary.get('Pending', 0) }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Denied
+                            <span class="badge bg-danger rounded-pill">{{ summary.get('Denied', 0) }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Cancelled
+                            <span class="badge bg-info rounded-pill">{{ summary.get('Cancelled', 0) }}</span>
+                        </li>
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No booking data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 🧑‍🏫 Top Teacher Rankings -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white fw-bold">Top 5 Teachers (Approved Bookings)</div>
+                <div class="card-body">
+                    {% if teacher_ranking %}
+                    <table class="table table-sm table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Teacher</th>
+                                <th class="text-end">Bookings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for teacher in teacher_ranking[:5] %}
+                            <tr>
+                                <td>{{ teacher[0] }}</td>
+                                <td class="text-end">
+                                    <span class="badge bg-primary">{{ teacher[1] }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-muted">No teacher ranking data found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 📚 Top Subject Rankings -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white fw-bold">Top 5 Subjects (Approved Bookings)</div>
+                <div class="card-body">
+                    {% if subject_ranking %}
+                    <table class="table table-sm table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Subject</th>
+                                <th class="text-end">Bookings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject in subject_ranking[:5] %}
+                            <tr>
+                                <td>{{ subject[0] }}</td>
+                                <td class="text-end">
+                                    <span class="badge bg-info">{{ subject[1] }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-muted">No subject ranking data found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👩‍🏫 Optional: Full Teacher List (if registration data is stored) -->
+    <div class="mt-5">
+        <h5 class="text-secondary">Registered Teachers Overview</h5>
+        {% if teacher_list %}
+        <table class="table table-bordered table-hover mt-2">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Total Bookings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teacher_list %}
+                <tr>
+                    <td>{{ teacher['FullName'] }}</td>
+                    <td>{{ teacher['Email'] }}</td>
+                    <td>{{ teacher['Phone'] }}</td>
+                    <td>{{ teacher['Bookings'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">No teacher registration records found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

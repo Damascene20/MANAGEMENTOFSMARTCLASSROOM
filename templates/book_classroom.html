@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-7">
+        <div class="card shadow p-4 mb-4 bg-white rounded border-secondary">
+            
+            <h2 class="card-title text-center mb-4 text-primary fs-4 fs-sm-2">
+                <i class="bi bi-calendar-check-fill me-2"></i> Book a SMART Classroom 
+            </h2>
+            <p class="text-center text-secondary mb-4 border-bottom pb-3 small">
+                Bookings are for a single <strong>40-minute slot</strong> and require ICT Admin approval.
+            </p>
+
+            <form action="{{ url_for('manage_bookings') }}" method="POST">
+                
+                <div class="card bg-light p-3 mb-4 border-0">
+                    <h5 class="text-dark"><i class="bi bi-person-fill me-2"></i> Your Details</h5>
+                    <div class="mb-2">
+                        <label for="teacher_name" class="form-label text-dark small">
+                            <strong>Logged in Teacher:</strong>
+                        </label>
+                        <input type="hidden" name="teacher_id" value="{{ session.get('user_id') }}">
+                        <input type="text" class="form-control form-control-sm form-control-plaintext bg-white border" 
+                               value="{{ session.get('username') }} ({{ session.get('role') }})" readonly>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="room_id" class="form-label text-info">
+                        <i class="bi bi-display-fill me-1"></i> SMART Classroom: <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select border-info form-select-sm" id="room_id" name="room_id" required aria-label="Select Classroom">
+                        <option value="" disabled selected>Select Classroom</option>
+                        {% for room in classrooms %}
+                            <option value="{{ room[0] }}">
+                                {{ room[1] }} (Equipment: {{ room[2] }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="card bg-light p-3 mb-4 border-warning">
+                    <h5 class="text-dark"><i class="bi bi-clock-fill me-2"></i> Choose Slot</h5>
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mb-3">
+                            <label for="date_str" class="form-label text-dark small">
+                                Date: <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" 
+                                   class="form-control border-dark form-control-sm" 
+                                   id="date_str" 
+                                   name="date_str" 
+                                   min="{{ today }}" 
+                                   required>
+                            <div class="form-text small text-muted">Please choose a future weekday.</div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 mb-3">
+                            <label for="start_time_str" class="form-label text-dark small">
+                                Start Time (40-min): <span class="text-danger">*</span>
+                            </label>
+                            <!-- Time picker input instead of dropdown -->
+                            <input type="time"
+                                   class="form-control border-dark form-control-sm"
+                                   id="start_time_str"
+                                   name="start_time_str"
+                                   min="08:00"
+                                   max="16:50"
+                                   step="600"  <!-- 600s = 10min intervals -->
+                                   required>
+                            <div class="form-text small text-muted">Pick a time between 08:00 and 16:50. Slot lasts 40 minutes.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="equipment" class="form-label text-success">
+                        <i class="bi bi-tools me-1"></i> Equipment Requested (Optional):
+                    </label>
+                    <input type="text" 
+                           class="form-control border-success form-control-sm" 
+                           id="equipment" 
+                           name="equipment" 
+                           placeholder="e.g., specific VR titles, 3D printing filament">
+                    <div class="form-text small text-muted">Specify any items not listed in the classroom description.</div>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mt-4 shadow">
+                    Submit Booking Request & Check Availability
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

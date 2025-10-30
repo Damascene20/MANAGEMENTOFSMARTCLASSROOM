@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-3 text-primary text-center">SMART Classroom Usage Reports & Rankings 📊</h2>
+
+<!-- Current Timestamp -->
+<p class="text-muted small mb-4 text-center">
+    Report generated on: <strong id="currentTime"></strong>
+</p>
+
+<!-- Info Alert -->
+<div class="alert alert-info shadow-sm mb-4 text-center">
+    <strong>Note:</strong> Rankings are based on <strong>Approved</strong> bookings only.
+</div>
+
+<div class="row">
+    <!-- Top Teachers Card -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Top Teachers by Usage 🧑‍🏫</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% if teacher_ranking %}
+                    {% for name, count in teacher_ranking %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>{{ loop.index }}.</strong> {{ name }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item text-muted">No teacher usage data available.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Top Subjects Card -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100 border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Top Subjects by Usage 📚</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% if subject_ranking %}
+                    {% for subject, count in subject_ranking %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>{{ loop.index }}.</strong> {{ subject }}</span>
+                            <span class="badge bg-secondary rounded-pill">{{ count }}</span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item text-muted">No subject usage data available.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row mt-4">
+    <!-- Booking Status Summary Chart & Table -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 border-dark">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Booking Status Summary</h5>
+            </div>
+            <div class="card-body">
+                <!-- Table with Counts and Percentages -->
+                <table class="table table-sm table-bordered text-center mb-3">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Status</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for label, count, percent in status_summary_list %}
+                        <tr>
+                            <td>{{ label }}</td>
+                            <td>{{ count }}</td>
+                            <td>{{ percent|round(1) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher & Subject Charts -->
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-sm mb-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Top Teachers by Usage 🧑‍🏫</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="teacherChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Top Subjects by Usage 📚</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="subjectChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Display current date and time
+    function updateTime() {
+        const now = new Date();
+        const options = { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' };
+        document.getElementById('currentTime').textContent = now.toLocaleString('en-US', options);
+    }
+    setInterval(updateTime, 1000); 
+    updateTime();
+
+    // Helper function to calculate percentages
+    function calculatePercentages(data) {
+        const total = data.reduce((a,b)=>a+b,0);
+        return data.map(v => ((v/total)*100).toFixed(1));
+    }
+
+    // --- Teacher Chart ---
+    const teacherData = {{ teacher_counts|tojson }};
+    const teacherLabels = {{ teacher_labels|tojson }};
+    const teacherPercentages = calculatePercentages(teacherData);
+
+    new Chart(document.getElementById('teacherChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: teacherLabels,
+            datasets: [{
+                label: 'Bookings',
+                data: teacherData,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            plugins: {
+                legend:{display:false},
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            return context.label + ': ' + context.raw + ' (' + teacherPercentages[index] + '%)';
+                        }
+                    }
+                }
+            },
+            scales: { y: { beginAtZero:true } }
+        }
+    });
+
+    // --- Subject Chart ---
+    const subjectData = {{ subject_counts|tojson }};
+    const subjectLabels = {{ subject_labels|tojson }};
+    const subjectPercentages = calculatePercentages(subjectData);
+
+    new Chart(document.getElementById('subjectChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: subjectLabels,
+            datasets: [{
+                label: 'Bookings',
+                data: subjectData,
+                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            plugins: {
+                legend:{display:false},
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            return context.label + ': ' + context.raw + ' (' + subjectPercentages[index] + '%)';
+                        }
+                    }
+                }
+            },
+            scales: { y: { beginAtZero:true } }
+        }
+    });
+
+    // --- Status Chart ---
+    const statusData = {{ status_counts|tojson }};
+    const statusLabels = {{ status_labels|tojson }};
+    const statusPercentages = calculatePercentages(statusData);
+
+    new Chart(document.getElementById('statusChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.7)',
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(220, 53, 69, 0.7)'
+                ],
+                borderColor: 'rgba(255,255,255,1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            return context.label + ': ' + context.raw + ' (' + statusPercentages[index] + '%)';
+                        }
+                    }
+                },
+                legend: { position:'bottom' }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="mt-4">📊 Classroom Analytics Dashboard</h3>
+<hr>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow h-100 p-3">
+            <h5 class="card-title">Booking Status Distribution</h5>
+            <canvas id="statusChart"></canvas> 
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card shadow h-100 p-3">
+            <h5 class="card-title">Top 10 Teacher Usage</h5>
+            <canvas id="teacherChart"></canvas> 
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card shadow h-100 p-3">
+            <h5 class="card-title">Top 10 Subject Usage</h5>
+            <canvas id="subjectChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. Booking Status (Doughnut Chart) ---
+    const statusData = {
+        labels: Object.keys({{ summary | tojson }}),
+        datasets: [{
+            label: 'Bookings',
+            data: Object.values({{ summary | tojson }}),
+            backgroundColor: [
+                '#198754', // Green for Approved
+                '#ffc107', // Yellow for Pending
+                '#dc3545', // Red for Denied
+                '#0dcaf0'  // Blue for Cancelled
+            ],
+            hoverOffset: 4
+        }]
+    };
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut', // Different chart type
+        data: statusData,
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // --- 2. Teacher Ranking (Horizontal Bar Chart) ---
+    const teacherLabels = [];
+    const teacherCounts = [];
+    // Convert Jinja2 tuple list into JS arrays
+    {% for name, count in teacher_ranking %}
+        teacherLabels.push("{{ name }}");
+        teacherCounts.push({{ count }});
+    {% endfor %}
+
+    const teacherData = {
+        labels: teacherLabels.reverse(), // Reverse for better display
+        datasets: [{
+            label: 'Approved Bookings',
+            data: teacherCounts.reverse(),
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgb(54, 162, 235)',
+            borderWidth: 1
+        }]
+    };
+    new Chart(document.getElementById('teacherChart'), {
+        type: 'bar', // Bar chart type
+        data: teacherData,
+        options: {
+            indexAxis: 'y', // Make it horizontal
+            responsive: true,
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+    
+    // --- 3. Subject Ranking (Vertical Bar Chart) ---
+    const subjectLabels = [];
+    const subjectCounts = [];
+    {% for subject, count in subject_ranking %}
+        subjectLabels.push("{{ subject }}");
+        subjectCounts.push({{ count }});
+    {% endfor %}
+
+    const subjectData = {
+        labels: subjectLabels,
+        datasets: [{
+            label: 'Approved Bookings by Subject',
+            data: subjectCounts,
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgb(75, 192, 192)',
+            borderWidth: 1
+        }]
+    };
+    new Chart(document.getElementById('subjectChart'), {
+        type: 'bar', // Bar chart type
+        data: subjectData,
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+{% endblock %}

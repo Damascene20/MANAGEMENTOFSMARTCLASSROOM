@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  /* Reduce table font and padding */
+  table.table {
+      font-size: 0.85rem;
+  }
+  table.table th, table.table td {
+      padding: 4px 6px;
+  }
+
+  /* Reduce card spacing */
+  .card {
+      border-radius: 8px;
+  }
+
+  /* Smaller headers */
+  h2, h5 {
+      font-size: 1.1rem;
+  }
+
+  /* Adjust layout for smaller screens */
+  @media (max-width: 992px) {
+      .col-md-5, .col-md-7 {
+          width: 100%;
+      }
+  }
+</style>
+
+<div class="row justify-content-center g-3">
+    <!-- Login Form Column -->
+    <div class="col-md-4">
+        <h2 class="mb-3 text-center">SMART Classroom Login</h2>
+        
+        <!-- Clock + Status -->
+        <div class="card bg-light mb-3 shadow-sm">
+            <div class="card-body text-center p-2">
+                <p id="current-time" class="fw-bold text-primary mb-1" style="font-size:1.1rem;"></p>
+                <p id="current-date" class="text-secondary small mb-2"></p>
+                <h6 class="text-dark mb-1">Lab Status: 
+                    <span class="badge bg-{{ 'success' if lab_status == 'Available' else 'danger' }}">
+                        {{ lab_status }}
+                    </span>
+                </h6>
+                <h6 class="text-dark mb-1">Session Ends In:</h6>
+                <div class="p-1 border rounded bg-white">
+                    <span id="countdown" class="fw-bold text-danger" style="font-size:1rem;"></span>
+                </div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} py-1 my-1">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Login Form -->
+        <div class="card shadow-sm">
+            <div class="card-body p-3">
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-2">
+                        <label for="username" class="form-label small">Username</label>
+                        <input type="text" class="form-control form-control-sm" id="username" name="username" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="password" class="form-label small">Password</label>
+                        <input type="password" class="form-control form-control-sm" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 btn-sm mt-2">Login</button>
+                </form>
+            </div>
+            <div class="card-footer text-center p-2">
+                <small>New Teacher? <a href="{{ url_for('register') }}">Register</a></small>|
+                 <small>Need To Brow? <a href="{{ url_for('request_material') }}">Request</a></small>
+            </div>
+           
+        </div>
+    </div>
+
+    <!-- Weekly Timetable Column -->
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-primary text-white p-2">
+                <h5 class="mb-0"><i class="bi bi-calendar-week me-1"></i> Weekly Timetable (Teacher NSHIMIRYAYO J. Damascene)</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped text-center align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Time</th>
+                                <th>Mon</th>
+                                <th>Tue</th>
+                                <th>Wed</th>
+                                <th>Thu</th>
+                                <th>Fri</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>08:00–08:40</td><td>S3B ICT</td><td>S1A ICT</td><td></td><td></td><td>S2A ICT</td></tr>
+                            <tr><td>08:40–09:20</td><td></td><td>S3B PHY</td><td>S3B PHY</td><td></td><td>S3B PHY</td></tr>
+                            <tr><td>09:20–10:00</td><td>S6HGL ICT</td><td>S3A PHY</td><td>S3B PHY</td><td>S2C ICT</td><td></td></tr>
+
+                            <tr class="table-secondary"><td colspan="6"><strong>Break (10:00–10:20)</strong></td></tr>
+
+                            <tr><td>10:20–11:00</td><td></td><td>S3A PHY</td><td>S4RAH ICT</td><td></td><td>S5HGL ICT</td></tr>
+                            <tr><td>11:00–11:40</td><td></td><td>S4RAH ICT</td><td>S5HGL ICT</td><td>S3A PHY</td><td>S3ICT</td></tr>
+                            <tr class="table-secondary"><td colspan="6"><strong>Lunch Break (12:20–13:10)</strong></td></tr>
+
+                            <tr><td>13:10–13:50</td><td>S5HGL ICT</td><td>S1B ICT</td><td>S3A ICT</td><td></td><td>S2B ICT</td></tr>
+                            <tr><td>13:50–14:30</td><td>S2C ICT</td><td></td><td>S2A ICT</td><td>S1B ICT</td><td>S3B ICT</td></tr>
+                            <tr><td>14:30–15:10</td><td></td><td>S4RA ICT</td><td>S2B ICT</td><td></td><td>S6HGL ICT</td></tr>
+
+                            <tr class="table-secondary"><td colspan="6"><strong>Break (15:00–15:20)</strong></td></tr>
+
+                            <tr><td>15:30–16:10</td><td>S5HGL SP</td><td></td><td></td><td>S6HGL ICT</td><td></td></tr>
+                            <tr><td>16:10–16:50</td><td>S1A ICT</td><td>S2C PS</td><td></td><td>S5HGL PS</td><td>S2C PS</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SESSION_DURATION_MS = {{ session_duration | default(40, true) }} * 60 * 1000;
+    const SESSION_DURATION_MIN = {{ session_duration | default(40, true) }};
+    function updateClockAndCountdown() {
+        const now = new Date();
+        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', dateOptions);
+
+        const start = new Date(now);
+        start.setMinutes(0, 0, 0);
+        let remaining = SESSION_DURATION_MS - (now - start) % SESSION_DURATION_MS;
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+        document.getElementById('countdown').textContent = `${String(mins).padStart(2, '0')}m : ${String(secs).padStart(2, '0')}s left`;
+    }
+    setInterval(updateClockAndCountdown, 1000);
+    updateClockAndCountdown();
+</script>
+{% endblock %}

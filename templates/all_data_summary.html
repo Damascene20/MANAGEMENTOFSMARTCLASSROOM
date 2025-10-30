@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}All System Data{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">System Data Summary</h1>
+
+    <h2 class="mt-5">📋 All Bookings ({{ bookings|length }})</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Teacher</th>
+                    <th>Classroom</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking['BookingID'] }}</td>
+                    <td>{{ booking['Date'] }}</td>
+                    <td>{{ booking['StartTime'] }} - {{ booking['EndTime'] }}</td>
+                    <td>{{ booking['TeacherName'] }}</td>
+                    <td>{{ booking['ClassroomName'] }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if booking['Status'] == 'Approved' %}bg-success
+                            {% elif booking['Status'] == 'Pending' %}bg-warning text-dark
+                            {% elif booking['Status'] == 'Denied' %}bg-danger
+                            {% else %}bg-secondary
+                            {% endif %}">
+                            {{ booking['Status'] }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <hr>
+
+    <h2 class="mt-5">🧑‍🏫 All Teachers ({{ teachers|length }})</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Subject</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Approved</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                    <td>{{ teacher['TeacherID'] }}</td>
+                    <td>{{ teacher['Name'] }}</td>
+                    <td>{{ teacher['Subject'] }}</td>
+                    <td>{{ teacher['Username'] }}</td>
+                    <td>{{ teacher['Role'] }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if teacher['IsApproved'] == 1 %}bg-success
+                            {% elif teacher['IsApproved'] == 0 %}bg-danger
+                            {% else %}bg-secondary
+                            {% endif %}">
+                            {{ "Yes" if teacher['IsApproved'] == 1 else "No" }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

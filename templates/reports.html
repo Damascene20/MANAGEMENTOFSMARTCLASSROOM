@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">SMART Classroom Usage Reports and Rankings 📊</h2>
+
+<div class="alert alert-info" role="alert">
+    <strong>Note:</strong> Rankings are based only on <strong>Approved</strong> bookings.
+</div>
+
+<div class="row">
+    {# --- Teacher Usage Ranking (Top Left) --- #}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Teacher Usage Ranking 🏆</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% if teacher_ranking %}
+                    {% for name, count in teacher_ranking %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>{{ loop.index }}. {{ name }}</strong>
+                            <span class="badge bg-primary rounded-pill">{{ count }} times</span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item text-muted">No approved usage data available yet.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    {# --- Subject Usage Ranking (Top Right) --- #}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Subject Usage Ranking 📚</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% if subject_ranking %}
+                    {% for subject, count in subject_ranking %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>{{ loop.index }}. {{ subject }}</strong>
+                            <span class="badge bg-secondary rounded-pill">{{ count }} times</span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item text-muted">No approved usage data available yet.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row mt-4">
+    {# --- Overall Booking Status Summary (Bottom Left) --- #}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Overall Booking Status Summary</h5>
+            </div>
+            <div class="card-body">
+                <p>Total <strong>Approved</strong> Bookings: 
+                    <span class="badge bg-success fs-6 p-2">{{ summary.get('Approved', 0) }}</span></p>
+                <p>Total <strong>Pending</strong> Bookings: 
+                    <span class="badge bg-warning fs-6 p-2">{{ summary.get('Pending', 0) }}</span></p>
+                <p>Total <strong>Denied</strong> Bookings: 
+                    <span class="badge bg-danger fs-6 p-2">{{ summary.get('Denied', 0) }}</span></p>
+                <p>Total <strong>Cancelled</strong> Bookings:
+                    <span class="badge bg-secondary fs-6 p-2">{{ summary.get('Cancelled', 0) }}</span></p>
+            </div>
+        </div>
+    </div>
+
+    {# --- Weekly Timetable (Bottom Right) --- #}
+    <div class="col-md-8 mb-4">
+        <div class="card shadow-lg h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i> Weekly Timetable (Teacher NSHIMIRYAYO J. Damascene)</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped text-center align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Time</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="table-active">08:00 - 08:40</td><td>S3B ICT</td><td>S1A ICT</td><td></td><td></td><td>S2A ICT</td></tr>
+                            <tr><td class="table-active">08:40 - 9:20</td><td></td><td>S3B PHY</td><td>S3B PHY</td><td></td><td>S3B PHY</td></tr>
+                            <tr><td class="table-active">09:20 - 10:00</td><td>S6HGL ICT</td><td>S3A PHY</td> S3B PHY <td></td><td>S2C ICT</td><td>S3A PHY</td></tr>
+
+                            <tr class="table-secondary"><td colspan="6"><strong>Break (10:00 - 10:20)</strong></td></tr>
+
+                            <tr><td class="table-active">10:20 - 11:00</td><td></td><td>S3A PHY</td><td>S4RAH ICT</td><td></td><td>S5HGL ICT</td></tr>
+                            <tr><td class="table-active">11:00 - 11:40</td><td></td><td>S4RAH ICT</td><td>S5HGL ICT</td><td>S3A PHY</td><td>S3ICT</td></tr>
+                             <tr class="table-secondary"><td colspan="6"><strong>Lunch Break (12:20 - 13:10)</strong></td></tr>
+                            <tr><td class="table-active">13:10 - 13:50</td><td>S5HGL ICT</td><td>S1B ICT</td><td>S3A ICT</td><td></td><td>S2B ICT</td></tr>
+
+                           
+
+                            <tr><td class="table-active">13:50 - 14:30</td><td>S2C ICT</td><td></td><td>S2A ICT</td>S1B ICT<td></td><td>S3B ICT</td></tr>
+                            <tr><td class="table-active">14:30 - 15:10</td><td></td><td>S4RA ICT</td><td>S2B ICT</td><td></td><td>S6HGL ICT</td></tr>
+                           <tr class="table-secondary"><td colspan="6"><strong>Break (15:00 - 15:20)</strong></td></tr>
+                            <tr><td class="table-active">15:30 - 16:10</td><td>S5HGL SP</td> <td></td><td></td><td>S6HGL ICT</td><td></td></tr>
+
+                            
+
+                            <tr><td class="table-active">16:10 - 16:50</td><td>S1A ICT</td><td>S2C PS</td><td></td> S5HGLPS<td></td><td>S2C PS</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

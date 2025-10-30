@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Details for {{ teacher_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        h1 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #e9ecef; width: 40%; }
+        .approved { color: green; font-weight: bold; }
+        .pending { color: orange; font-weight: bold; }
+        .back-link { margin-top: 20px; display: block; text-decoration: none; padding: 8px 15px; background-color: #007bff; color: white; border-radius: 4px; text-align: center; }
+        .back-link:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teacher Details: {{ teacher_name }}</h1>
+        
+        <table>
+            <tbody>
+                {# Loop through the list of (ColumnName, Value) pairs #}
+                {% for label, value in teacher_details %}
+                <tr>
+                    <th>{{ label }}</th>
+                    <td>
+                        {# Custom display for the Approved Status column #}
+                        {% if label == 'Approved Status' %}
+                            {% if value == 1 %}
+                                <span class="approved">APPROVED</span>
+                            {% else %}
+                                <span class="pending">PENDING</span>
+                            {% endif %}
+                        {# Display the Password Hash securely #}
+                        {% elif label == 'Password Hash' %}
+                            <span title="This is a secure hash, not the password.">{{ value[:20] }}...</span>
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {# Link back to the main list page, which is accessible via /admin/teachers #}
+        <a href="{{ url_for('list_all_teachers_html') }}" class="back-link">
+            ← Back to Teacher List
+        </a>
+    </div>
+</body>
+</html>

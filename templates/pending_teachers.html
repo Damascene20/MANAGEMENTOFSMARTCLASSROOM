@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4 text-center">Pending Teacher Approvals 🕒</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Class</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr>
+                <td>{{ teacher[0] }}</td>
+                <td>{{ teacher[1] }}</td>
+                <td>{{ teacher[2] }}</td>
+                <td>{{ teacher[6] }}</td>
+                <td>{{ teacher[7] }}</td>
+                <td>{{ teacher[8] }}</td>
+                <td>{{ teacher[3] }}</td>
+                <td>{{ teacher[4] }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('approve_teacher', teacher_id=teacher[0], action='approve') }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('approve_teacher', teacher_id=teacher[0], action='deny') }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-warning">Deny</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
