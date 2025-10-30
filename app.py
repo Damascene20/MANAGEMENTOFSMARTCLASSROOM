@@ -331,7 +331,7 @@ def delete_teacher_account(teacher_id):
     return redirect(url_for('manage_teachers'))
 
 
-@app.route("/admin/approve_booking/<int:booking_id>", methods=["POST"])
+@app.route("/admin/approve_booking/<int:booking_id>", methods=["GET", "POST"])
 def approve_booking(booking_id):
     update_booking_status(booking_id, "Approved")
     flash("Booking approved!", "success")
